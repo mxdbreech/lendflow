@@ -270,7 +270,8 @@ export function CommitmentDetail() {
             <TrendingUp className="h-4 w-4 text-primary" />
             <h2 className="font-semibold text-sm">Monthly Yield Received</h2>
           </div>
-          <ResponsiveContainer width="100%" height={160}>
+          <div className="h-40 w-full min-w-0">
+          <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} barSize={16}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(138 12% 91%)" vertical={false} />
               <XAxis dataKey="month" tick={{ fontSize: 10, fill: 'hsl(220 8% 48%)' }} axisLine={false} tickLine={false} />
@@ -280,6 +281,7 @@ export function CommitmentDetail() {
               <Bar dataKey="principal" name="Principal" fill="hsl(142 52% 70%)" radius={[3, 3, 0, 0]} stackId="a" />
             </BarChart>
           </ResponsiveContainer>
+          </div>
         </div>
       )}
 

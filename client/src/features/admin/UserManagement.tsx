@@ -36,18 +36,18 @@ export function UserManagement() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">User Management</h1>
 
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <input
-          type="text"
+          type="search"
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search name or email..."
-          className="flex-1 rounded-md border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex-1 min-w-0 rounded-md border bg-background px-3 py-2 text-base sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
         <select
           value={roleFilter}
           onChange={e => setRoleFilter(e.target.value)}
-          className="rounded-md border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="rounded-md border bg-background px-3 py-2 text-base sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <option value="">All Roles</option>
           <option value="borrower">Borrowers</option>
@@ -58,6 +58,47 @@ export function UserManagement() {
 
       {isLoading ? <TableSkeleton /> : (
         <div className="rounded-lg border overflow-hidden">
+          <div className="md:hidden divide-y">
+            {data?.users.map(user => (
+              <div key={user.id} className="p-4 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium truncate">{user.name}</p>
+                    <p className="text-sm text-muted-foreground break-all">{user.email}</p>
+                  </div>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
+                    user.role === 'admin' ? 'bg-purple-100 text-purple-700'
+                    : user.role === 'lender' ? 'bg-blue-100 text-blue-700'
+                    : 'bg-green-100 text-green-700'
+                  }`}>
+                    {user.role}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-3 text-sm">
+                  <span className={`rounded-full px-2 py-0.5 text-xs ${
+                    user.status === 'active' ? 'bg-green-100 text-green-700'
+                    : user.status === 'suspended' ? 'bg-red-100 text-red-700'
+                    : 'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {user.status}
+                  </span>
+                  <span className="text-muted-foreground">{formatDate(user.created_at)}</span>
+                </div>
+                {user.role !== 'admin' && (
+                  <select
+                    value={user.status}
+                    onChange={e => updateUser.mutate({ id: user.id, status: e.target.value })}
+                    className="w-full rounded-md border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <option value="active">Active</option>
+                    <option value="suspended">Suspended</option>
+                    <option value="pending_verification">Pending</option>
+                  </select>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted/50 border-b">
               <tr>
@@ -110,6 +151,7 @@ export function UserManagement() {
               ))}
             </tbody>
           </table>
+          </div>
           <div className="px-3 py-2 border-t text-xs text-muted-foreground">{data?.total ?? 0} users</div>
         </div>
       )}

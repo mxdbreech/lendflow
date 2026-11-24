@@ -58,12 +58,34 @@
   * {
     @apply border-border;
   }
+  html {
+    height: 100%;
+  }
   body {
     @apply bg-background text-foreground;
     font-family: 'DM Sans', system-ui, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  #root {
+    min-height: 100%;
+  }
+  input,
+  select,
+  textarea {
+    scroll-margin-bottom: 30vh;
+  }
+}
+
+/* Keep iOS from zooming focused fields, and keep tap height comfortable on phones. */
+@media (max-width: 767px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  select,
+  textarea {
+    font-size: 16px !important;
+    min-height: 44px;
   }
 }
 

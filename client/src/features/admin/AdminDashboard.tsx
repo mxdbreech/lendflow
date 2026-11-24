@@ -140,35 +140,33 @@ export function AdminDashboard() {
     : -1
 
   if (isLoading) return (
-    <div className="flex gap-6">
-      <div className="flex-1 space-y-6">
-        <div className="grid grid-cols-4 gap-4">{Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} />)}</div>
+    <div className="flex flex-col xl:flex-row gap-6">
+      <div className="flex-1 min-w-0 space-y-6">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">{Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} />)}</div>
         <CardSkeleton />
       </div>
-      <div className="w-72 space-y-4"><CardSkeleton /><CardSkeleton /></div>
+      <div className="w-full xl:w-72 space-y-4"><CardSkeleton /><CardSkeleton /></div>
     </div>
   )
 
   return (
-    <div className="flex gap-6 min-h-full">
+    <div className="flex flex-col xl:flex-row gap-6 min-h-full">
       {/* ── Main content ─────────────────────────────────────────── */}
       <div className="flex-1 min-w-0 space-y-6">
 
         {/* Header row */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-xl font-bold">Overview</h1>
             <p className="text-sm text-muted-foreground mt-0.5">Platform performance at a glance</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Link
-              to="/api/reports/export?type=transactions"
-              className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition-colors shadow-sm"
-            >
-              <Download className="h-4 w-4" />
-              Export
-            </Link>
-          </div>
+          <Link
+            to="/api/reports/export?type=transactions"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-white hover:bg-primary/90 transition-colors shadow-sm"
+          >
+            <Download className="h-4 w-4" />
+            Export
+          </Link>
         </div>
 
         {/* Alerts */}
@@ -179,7 +177,7 @@ export function AdminDashboard() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100">
                   <Clock className="h-4 w-4 text-amber-600" />
                 </div>
-                <p className="text-sm text-amber-800"><strong>{data.alerts.stale_pending_count}</strong> application{data.alerts.stale_pending_count !== 1 ? 's' : ''} waiting over 48h for review</p>
+                <p className="text-sm text-amber-800 min-w-0"><strong>{data.alerts.stale_pending_count}</strong> application{data.alerts.stale_pending_count !== 1 ? 's' : ''} waiting over 48h for review</p>
               </Link>
             )}
             {(data.alerts.stale_funding_count ?? 0) > 0 && (
@@ -187,7 +185,7 @@ export function AdminDashboard() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100">
                   <AlertTriangle className="h-4 w-4 text-amber-600" />
                 </div>
-                <p className="text-sm text-amber-800"><strong>{data.alerts.stale_funding_count}</strong> loan{data.alerts.stale_funding_count !== 1 ? 's' : ''} in funding for over 14 days</p>
+                <p className="text-sm text-amber-800 min-w-0"><strong>{data.alerts.stale_funding_count}</strong> loan{data.alerts.stale_funding_count !== 1 ? 's' : ''} in funding for over 14 days</p>
               </Link>
             )}
           </div>
@@ -199,17 +197,17 @@ export function AdminDashboard() {
             <h2 className="font-semibold">Performance</h2>
             <span className="rounded-lg border border-border bg-white px-3 py-1 text-xs font-medium text-muted-foreground">Last Year ↓</span>
           </div>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
             {kpis.map(({ label, value, sub, delta, up, active }) => (
               <div
                 key={label}
-                className={`rounded-xl bg-white p-4 shadow-sm transition-all ${
+                className={`rounded-xl bg-card p-4 shadow-sm transition-all min-w-0 ${
                   active ? 'ring-2 ring-primary shadow-md' : 'border border-border'
                 }`}
               >
                 <p className="text-xs text-muted-foreground">{label}</p>
-                <div className="flex items-end justify-between mt-1">
-                  <p className="text-xl font-bold leading-tight">{value}</p>
+                <div className="flex items-end justify-between gap-2 mt-1">
+                  <p className="text-lg sm:text-xl font-bold leading-tight break-words">{value}</p>
                   <span className={`flex items-center gap-0.5 text-xs font-semibold ${up ? 'text-primary' : 'text-destructive'}`}>
                     {up ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                     {delta}
@@ -224,13 +222,14 @@ export function AdminDashboard() {
         {/* Origination bar chart */}
         {origination && origination.length > 0 && (
           <section>
-            <div className="card-base p-5">
+            <div className="card-base p-3 sm:p-5 min-w-0">
               <h2 className="font-semibold mb-4">Monthly Origination Volume</h2>
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={origination} barSize={28}>
+              <div className="h-[220px] w-full min-w-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={origination} barSize={28} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(138 12% 91%)" vertical={false} />
-                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: 'hsl(220 8% 48%)' }} axisLine={false} tickLine={false} />
-                  <YAxis tickFormatter={v => `${symbol}${(v / 100000).toFixed(0)}k`} tick={{ fontSize: 11, fill: 'hsl(220 8% 48%)' }} axisLine={false} tickLine={false} />
+                  <XAxis dataKey="month" tick={{ fontSize: 10, fill: 'hsl(220 8% 48%)' }} axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={16} />
+                  <YAxis width={40} tickFormatter={v => `${symbol}${(v / 100000).toFixed(0)}k`} tick={{ fontSize: 10, fill: 'hsl(220 8% 48%)' }} axisLine={false} tickLine={false} />
                   <Tooltip
                     formatter={(v: unknown) => formatCents(v as number)}
                     contentStyle={{ borderRadius: '8px', border: '1px solid hsl(138 12% 88%)', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
@@ -242,6 +241,7 @@ export function AdminDashboard() {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
+              </div>
             </div>
           </section>
         )}
@@ -312,16 +312,16 @@ export function AdminDashboard() {
 
         {/* Users + revenue quick stats */}
         <section>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
             {[
               { label: 'Fees This Month', value: formatCents(data?.revenue.origination_fees_this_month ?? 0), accent: true },
               { label: 'Total Borrowers', value: String(data?.users.total_borrowers ?? 0) },
               { label: 'Total Lenders', value: String(data?.users.total_lenders ?? 0) },
               { label: 'Avg. Time to Fund', value: `${data?.avg_time_to_fund_days?.toFixed(1) ?? '0'} days` },
             ].map(({ label, value, accent }) => (
-              <div key={label} className="card-base p-4">
+              <div key={label} className="card-base p-4 min-w-0">
                 <p className="text-xs text-muted-foreground">{label}</p>
-                <p className={`text-lg font-bold mt-1 ${accent ? 'text-primary' : ''}`}>{value}</p>
+                <p className={`text-base sm:text-lg font-bold mt-1 break-words ${accent ? 'text-primary' : ''}`}>{value}</p>
               </div>
             ))}
           </div>
@@ -329,7 +329,7 @@ export function AdminDashboard() {
       </div>
 
       {/* ── Right sidebar ─────────────────────────────────────────── */}
-      <div className="w-72 flex-shrink-0 space-y-4">
+      <div className="w-full xl:w-72 xl:flex-shrink-0 space-y-4">
 
         {/* Activity heatmap */}
         <div className="card-base p-4">

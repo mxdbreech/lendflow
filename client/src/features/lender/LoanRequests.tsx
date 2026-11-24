@@ -178,7 +178,7 @@ function RequestCard({ req, expanded, onToggle, onAccept, acceptPending, rejecti
           {req.users?.email && (
             <div>
               <p className="text-xs text-muted-foreground">Contact</p>
-              <p className="text-sm">{req.users.email}{req.users.phone ? ` · ${req.users.phone}` : ''}</p>
+              <p className="text-sm break-all">{req.users.email}{req.users.phone ? ` · ${req.users.phone}` : ''}</p>
             </div>
           )}
           {req.purpose_description && (

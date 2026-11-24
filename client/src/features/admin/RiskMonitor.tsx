@@ -43,6 +43,25 @@ export function RiskMonitor() {
           <EmptyState icon={Shield} title="No at-risk loans" description="All active loans are current on payments." />
         ) : (
           <div className="rounded-lg border overflow-hidden">
+            <div className="md:hidden divide-y">
+              {data.at_risk_loans.map(loan => (
+                <div key={loan.loan_id} className={`p-4 space-y-2 ${loan.approaching_default ? 'bg-red-50' : ''}`}>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-mono text-sm">{loan.loan_id.slice(0, 8)}…</p>
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${loan.approaching_default ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
+                      {loan.approaching_default ? 'Critical' : 'Watch'}
+                    </span>
+                  </div>
+                  <p className="font-mono text-sm">{formatCents(loan.approved_amount)}</p>
+                  <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground">
+                    <span>Missed {loan.missed_payments}</span>
+                    <span>Late {loan.late_payments}</span>
+                    <span>Limit {loan.threshold}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/50 border-b">
                 <tr>
@@ -71,13 +90,14 @@ export function RiskMonitor() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </section>
 
       <section>
         <h2 className="text-lg font-semibold mb-3">NPL Rate by Credit Grade</h2>
-        <div className="grid grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {data?.npl_by_grade.map(({ grade, total, defaulted, npl_rate }) => (
             <div key={grade} className={`rounded-xl border p-4 ${npl_rate > 10 ? 'border-red-200 bg-red-50' : npl_rate > 5 ? 'border-amber-200 bg-amber-50' : ''}`}>
               <p className="text-sm font-bold">Grade {grade}</p>

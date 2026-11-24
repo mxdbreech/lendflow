@@ -123,21 +123,21 @@ export function ActiveLoanDetail() {
 
   return (
     <div className="max-w-4xl space-y-8">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">{LOAN_PURPOSE_LABELS[loan.purpose] ?? loan.purpose}</h1>
-          <div className="flex items-center gap-3 mt-1">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold break-words">{LOAN_PURPOSE_LABELS[loan.purpose] ?? loan.purpose}</h1>
+          <div className="flex items-center gap-3 mt-1 flex-wrap">
             <StatusBadge status={loan.status} />
             <CreditGradeBadge grade={loan.admin_override_grade ?? loan.ai_credit_grade} />
           </div>
         </div>
-        <div className="text-right space-y-2">
-          <p className="text-3xl font-bold">{fmt(loan.approved_amount ?? 0)}</p>
+        <div className="sm:text-right space-y-2">
+          <p className="text-2xl sm:text-3xl font-bold break-words">{fmt(loan.approved_amount ?? 0)}</p>
           <p className="text-sm text-muted-foreground">{loan.term_months} month term</p>
           {CANCELLABLE.includes(loan.status) && !showCancel && (
             <button
               onClick={() => setShowCancel(true)}
-              className="flex items-center gap-1.5 rounded-lg border border-destructive/40 px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/5 transition-colors ml-auto"
+              className="flex min-h-11 items-center gap-1.5 rounded-lg border border-destructive/40 px-3 text-xs font-medium text-destructive hover:bg-destructive/5 transition-colors sm:ml-auto"
             >
               <XCircle className="h-3.5 w-3.5" /> Cancel Loan
             </button>
@@ -169,17 +169,17 @@ export function ActiveLoanDetail() {
               />
             )}
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <button
               onClick={() => cancelMutation.mutate()}
               disabled={cancelMutation.isPending || (cancelReason === 'Other' && !cancelOther.trim())}
-              className="rounded-lg bg-destructive px-4 py-2 text-sm font-semibold text-white hover:bg-destructive/90 disabled:opacity-50 transition-colors"
+              className="min-h-11 rounded-lg bg-destructive px-4 text-sm font-semibold text-white hover:bg-destructive/90 disabled:opacity-50 transition-colors"
             >
               {cancelMutation.isPending ? 'Cancelling…' : 'Confirm Cancellation'}
             </button>
             <button
               onClick={() => { setShowCancel(false); setCancelReason(CANCEL_REASONS[0]); setCancelOther('') }}
-              className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
+              className="min-h-11 rounded-lg border px-4 text-sm font-medium hover:bg-muted transition-colors"
             >
               Keep Loan
             </button>
@@ -189,7 +189,7 @@ export function ActiveLoanDetail() {
 
       {['active', 'repaying', 'completed'].includes(loan.status) && (
         <>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="card-base p-4">
               <p className="text-xs text-muted-foreground">Monthly Payment</p>
               <p className="text-xl font-bold mt-1">{fmt(loan.monthly_payment ?? 0)}</p>
@@ -220,12 +220,12 @@ export function ActiveLoanDetail() {
 
           {nextDue && loan.status !== 'completed' && (
             <div className="card-base p-5 space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="font-semibold">Next Payment Due</p>
                   <p className="text-sm text-muted-foreground">{formatDate(nextDue.due_date)}</p>
                 </div>
-                <p className="text-2xl font-bold">{fmt(nextDue.total_due + nextDue.late_fee)}</p>
+                <p className="text-2xl font-bold break-words">{fmt(nextDue.total_due + nextDue.late_fee)}</p>
               </div>
 
               {nextDue.late_fee > 0 && (
@@ -235,12 +235,12 @@ export function ActiveLoanDetail() {
               )}
 
               <div className="space-y-2">
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-2">
                   {(['installment', 'custom', 'payoff'] as const).map(mode => (
                     <button
                       key={mode}
                       onClick={() => setPayMode(mode)}
-                      className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${payMode === mode ? 'bg-primary text-primary-foreground' : 'border hover:bg-accent'}`}
+                      className={`min-h-11 rounded-md px-3 text-xs font-medium transition-colors ${payMode === mode ? 'bg-primary text-primary-foreground' : 'border hover:bg-accent'}`}
                     >
                       {mode === 'installment' ? 'Pay installment' : mode === 'custom' ? 'Custom amount' : 'Pay off loan'}
                     </button>
@@ -267,11 +267,11 @@ export function ActiveLoanDetail() {
                   </div>
                 )}
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                   <button
                     onClick={handlePayment}
                     disabled={paying || (payMode === 'custom' && !payAmount) || (walletData?.available_balance ?? 0) < (nextDue.total_due + nextDue.late_fee)}
-                    className="rounded-lg bg-primary px-6 py-2 text-sm font-semibold text-white hover:bg-primary/90 disabled:opacity-50 transition-colors"
+                    className="min-h-11 rounded-lg bg-primary px-6 text-sm font-semibold text-white hover:bg-primary/90 disabled:opacity-50 transition-colors"
                   >
                     {paying ? 'Processing…' : 'Make Payment'}
                   </button>
@@ -304,6 +304,31 @@ export function ActiveLoanDetail() {
         <h2 className="text-lg font-semibold mb-3">Payment Schedule</h2>
         {schedLoading ? <TableSkeleton /> : (
           <div className="card-base overflow-hidden">
+            <div className="md:hidden divide-y divide-border">
+              {schedule?.map(row => (
+                <div key={row.id} className="p-4 space-y-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-medium">#{row.installment_number} · {formatDate(row.due_date)}</p>
+                    <ScheduleStatusIcon status={row.status} />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div>
+                      <p className="text-muted-foreground">Principal</p>
+                      <p className="font-mono">{fmt(row.principal_due)}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Interest</p>
+                      <p className="font-mono">{fmt(row.interest_due)}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Total</p>
+                      <p className="font-mono font-medium">{fmt(row.total_due)}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/30 border-b border-border">
                 <tr>
@@ -330,6 +355,7 @@ export function ActiveLoanDetail() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </section>

@@ -84,7 +84,7 @@ export function BorrowerReports() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-3 gap-4">{Array.from({ length: 3 }).map((_, i) => <CardSkeleton key={i} />)}</div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">{Array.from({ length: 3 }).map((_, i) => <CardSkeleton key={i} />)}</div>
         <CardSkeleton />
       </div>
     )
@@ -92,22 +92,22 @@ export function BorrowerReports() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold">My Reports</h1>
           <p className="text-muted-foreground mt-1">Payment history and loan summaries</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <button
             onClick={downloadCSV}
-            className="flex items-center gap-2 rounded-md border px-4 py-2 text-sm hover:bg-muted transition-colors"
+            className="flex min-h-11 items-center justify-center gap-2 rounded-md border px-4 text-sm hover:bg-muted transition-colors"
           >
             <Download className="h-4 w-4" />
             Loan Summary
           </button>
           <button
             onClick={downloadTransactions}
-            className="flex items-center gap-2 rounded-md border px-4 py-2 text-sm hover:bg-muted transition-colors"
+            className="flex min-h-11 items-center justify-center gap-2 rounded-md border px-4 text-sm hover:bg-muted transition-colors"
           >
             <Download className="h-4 w-4" />
             Transactions
@@ -116,20 +116,20 @@ export function BorrowerReports() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="card-base p-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="card-base p-4 sm:p-5 min-w-0">
           <p className="text-xs text-muted-foreground">Active Loans</p>
           <p className="text-2xl font-bold mt-1">{summary.active_loans}</p>
           <p className="text-xs text-muted-foreground mt-0.5">currently repaying</p>
         </div>
-        <div className="card-base p-5">
+        <div className="card-base p-4 sm:p-5 min-w-0">
           <p className="text-xs text-muted-foreground">Completed Loans</p>
           <p className="text-2xl font-bold mt-1 text-emerald-700">{summary.completed_loans}</p>
           <p className="text-xs text-muted-foreground mt-0.5">fully repaid</p>
         </div>
-        <div className="card-base p-5">
+        <div className="card-base p-4 sm:p-5 min-w-0">
           <p className="text-xs text-muted-foreground">Total Borrowing</p>
-          <p className="text-2xl font-bold mt-1">
+          <p className="text-xl sm:text-2xl font-bold mt-1 break-words">
             {formatCents(activeAndCompleted.reduce((s, l) => s + (l.approved_amount ?? l.amount_requested), 0))}
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">across {activeAndCompleted.length} loan{activeAndCompleted.length !== 1 ? 's' : ''}</p>
@@ -147,6 +147,33 @@ export function BorrowerReports() {
         <section>
           <h2 className="text-lg font-semibold mb-3">Loan History</h2>
           <div className="rounded-lg border overflow-hidden">
+            <div className="md:hidden divide-y">
+              {activeAndCompleted.map(loan => {
+                const totalInterest = loan.total_repayment && loan.approved_amount
+                  ? loan.total_repayment - loan.approved_amount
+                  : null
+                return (
+                  <div key={loan.id} className="p-4 space-y-2">
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="font-medium">{LOAN_PURPOSE_LABELS[loan.purpose] ?? loan.purpose}</p>
+                      <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
+                        loan.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'
+                      }`}>
+                        {loan.status === 'completed' ? 'Completed' : 'Active'}
+                      </span>
+                    </div>
+                    <p className="font-mono text-sm">{formatCents(loan.approved_amount ?? loan.amount_requested)}</p>
+                    <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                      <span>Rate {loan.interest_rate ? formatPercent(loan.interest_rate) : '—'}</span>
+                      <span>Term {loan.term_months}mo</span>
+                      <span>Monthly {loan.monthly_payment ? formatCents(loan.monthly_payment) : '—'}</span>
+                      <span>{totalInterest !== null ? `Total ${formatCents(loan.total_repayment!)}` : 'Total —'}</span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/50 border-b">
                 <tr>
@@ -192,6 +219,7 @@ export function BorrowerReports() {
                 })}
               </tbody>
             </table>
+            </div>
           </div>
         </section>
       )}
@@ -211,7 +239,7 @@ export function BorrowerReports() {
                   const pct = total > 0 ? (interest / total) * 100 : 0
                   return (
                     <div key={loan.id}>
-                      <div className="flex justify-between text-sm mb-1">
+                      <div className="flex flex-col gap-0.5 sm:flex-row sm:justify-between text-sm mb-1">
                         <span>{LOAN_PURPOSE_LABELS[loan.purpose] ?? loan.purpose}</span>
                         <span className="text-muted-foreground">{formatCents(interest)} interest on {formatCents(principal)}</span>
                       </div>

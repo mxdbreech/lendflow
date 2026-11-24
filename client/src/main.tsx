@@ -24,7 +24,14 @@ createRoot(document.getElementById('root')!).render(
           <AuthProvider>
             <CurrencyLoader />
             <RouterProvider router={router} />
-            <Toaster richColors position="top-right" closeButton />
+            <Toaster
+              richColors
+              position="top-center"
+              closeButton
+              offset={{ top: 'max(12px, env(safe-area-inset-top))' }}
+              mobileOffset={{ top: 'max(12px, env(safe-area-inset-top))' }}
+              toastOptions={{ className: 'max-w-[calc(100vw-1.5rem)]' }}
+            />
           </AuthProvider>
         </QueryClientProvider>
       </ThemeProvider>

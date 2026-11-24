@@ -84,11 +84,9 @@ export function AdminReports() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Platform Reports</h1>
-          <p className="text-muted-foreground mt-1">Origination trends, NPL analysis, and revenue (last 12 months)</p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold">Platform Reports</h1>
+        <p className="text-muted-foreground mt-1">Origination trends, NPL analysis, and revenue (last 12 months)</p>
       </div>
 
       {/* KPI cards */}
@@ -99,9 +97,9 @@ export function AdminReports() {
           { label: 'Origination Fee Revenue', value: formatCents(totalRevenue), accent: true },
           { label: 'Overall NPL Rate', value: `${overallNPL.toFixed(2)}%`, warn: overallNPL > 5 },
         ].map(({ label, value, accent, warn }) => (
-          <div key={label} className="card-base p-5">
+          <div key={label} className="card-base p-4 sm:p-5 min-w-0">
             <p className="text-xs text-muted-foreground">{label}</p>
-            <p className={`text-2xl font-bold mt-1 ${accent ? 'text-emerald-700' : warn ? 'text-red-600' : ''}`}>{value}</p>
+            <p className={`text-lg sm:text-2xl font-bold mt-1 break-words ${accent ? 'text-emerald-700' : warn ? 'text-red-600' : ''}`}>{value}</p>
           </div>
         ))}
       </div>
@@ -109,28 +107,30 @@ export function AdminReports() {
       {/* Origination trends */}
       {origination && origination.length > 0 && (
         <section>
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between gap-3 mb-3">
             <h2 className="text-lg font-semibold">Monthly Origination Volume</h2>
             <button
               onClick={() => downloadCSV(origination, 'origination-trends.csv')}
-              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+              className="flex min-h-11 shrink-0 items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
             >
               <Download className="h-4 w-4" /> CSV
             </button>
           </div>
-          <div className="card-base p-5">
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={origination}>
+          <div className="card-base p-3 sm:p-5 min-w-0">
+            <div className="h-[240px] w-full min-w-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={origination} margin={{ top: 4, right: 0, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                <YAxis yAxisId="left" tickFormatter={v => `${symbol}${(v / 100000).toFixed(0)}k`} tick={{ fontSize: 11 }} />
-                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11 }} />
+                <XAxis dataKey="month" tick={{ fontSize: 10 }} interval="preserveStartEnd" minTickGap={12} />
+                <YAxis yAxisId="left" width={36} tickFormatter={v => `${symbol}${(v / 100000).toFixed(0)}k`} tick={{ fontSize: 10 }} />
+                <YAxis yAxisId="right" orientation="right" width={28} tick={{ fontSize: 10 }} />
                 <Tooltip formatter={(v: unknown, name: unknown) => name === 'Volume' ? formatCents(v as number) : (v as number)} />
                 <Legend />
                 <Bar yAxisId="left" dataKey="volume" name="Volume" fill="#3b82f6" radius={[2, 2, 0, 0]} />
                 <Bar yAxisId="right" dataKey="count" name="Count" fill="#10b981" radius={[2, 2, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
+            </div>
           </div>
         </section>
       )}
@@ -142,13 +142,13 @@ export function AdminReports() {
             <h2 className="text-lg font-semibold">NPL Rate by Credit Grade</h2>
             <button
               onClick={() => downloadCSV(npl, 'npl-by-grade.csv')}
-              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+              className="flex min-h-11 shrink-0 items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
             >
               <Download className="h-4 w-4" /> CSV
             </button>
           </div>
-          <div className="card-base p-5">
-            <div className="grid grid-cols-5 gap-3 mb-6">
+          <div className="card-base p-3 sm:p-5 min-w-0">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
               {npl.map(row => (
                 <div key={row.grade} className="rounded-lg border p-3 text-center">
                   <div className="text-2xl font-bold" style={{ color: GRADE_COLORS[row.grade] }}>
@@ -159,11 +159,12 @@ export function AdminReports() {
                 </div>
               ))}
             </div>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={npl}>
+            <div className="h-[200px] w-full min-w-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={npl} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                 <XAxis dataKey="grade" tick={{ fontSize: 12 }} />
-                <YAxis tickFormatter={v => `${v}%`} tick={{ fontSize: 11 }} />
+                <YAxis width={36} tickFormatter={v => `${v}%`} tick={{ fontSize: 10 }} />
                 <Tooltip formatter={(v: unknown) => `${v}%`} />
                 <Bar dataKey="npl_rate" name="NPL Rate (%)" radius={[2, 2, 0, 0]}>
                   {npl.map(row => (
@@ -172,6 +173,7 @@ export function AdminReports() {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+            </div>
           </div>
         </section>
       )}
@@ -183,23 +185,25 @@ export function AdminReports() {
             <h2 className="text-lg font-semibold">Origination Fee Revenue</h2>
             <button
               onClick={() => downloadCSV(revenue, 'platform-revenue.csv')}
-              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+              className="flex min-h-11 shrink-0 items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
             >
               <Download className="h-4 w-4" /> CSV
             </button>
           </div>
-          <div className="card-base p-5">
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={revenue}>
+          <div className="card-base p-3 sm:p-5 min-w-0">
+            <div className="h-[200px] w-full min-w-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={revenue} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                <YAxis tickFormatter={v => `${symbol}${(v / 100).toFixed(0)}`} tick={{ fontSize: 11 }} />
+                <XAxis dataKey="month" tick={{ fontSize: 10 }} interval="preserveStartEnd" minTickGap={12} />
+                <YAxis width={40} tickFormatter={v => `${symbol}${(v / 100).toFixed(0)}`} tick={{ fontSize: 10 }} />
                 <Tooltip formatter={(v: unknown) => formatCents(v as number)} />
                 <Legend />
                 <Line type="monotone" dataKey="fees" name="Monthly Fees" stroke="#3b82f6" strokeWidth={2} dot={false} />
                 <Line type="monotone" dataKey="cumulative" name="Cumulative" stroke="#10b981" strokeWidth={2} dot={false} strokeDasharray="5 5" />
               </LineChart>
             </ResponsiveContainer>
+            </div>
           </div>
         </section>
       )}
@@ -211,12 +215,35 @@ export function AdminReports() {
             <h2 className="text-lg font-semibold">Cohort Performance</h2>
             <button
               onClick={() => downloadCSV(cohort, 'cohort-performance.csv')}
-              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+              className="flex min-h-11 shrink-0 items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
             >
               <Download className="h-4 w-4" /> CSV
             </button>
           </div>
           <div className="rounded-lg border overflow-hidden">
+            <div className="md:hidden divide-y">
+              {cohort.map(row => {
+                const defaultRate = row.originated > 0 ? ((row.defaulted / row.originated) * 100).toFixed(1) : '0.0'
+                return (
+                  <div key={row.month} className="p-4 space-y-2">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="font-medium">{row.month}</p>
+                      <p className="font-mono text-sm">{formatCents(row.volume)}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-sm">
+                      <span className="text-muted-foreground">Originated <span className="text-foreground">{row.originated}</span></span>
+                      <span className="text-muted-foreground">Active <span className="text-blue-600">{row.active}</span></span>
+                      <span className="text-muted-foreground">Completed <span className="text-emerald-600">{row.completed}</span></span>
+                      <span className="text-muted-foreground">Defaulted <span className="text-red-600">{row.defaulted}</span></span>
+                    </div>
+                    <p className={`text-sm ${parseFloat(defaultRate) > 5 ? 'text-red-600 font-medium' : 'text-muted-foreground'}`}>
+                      Default rate {defaultRate}%
+                    </p>
+                  </div>
+                )
+              })}
+            </div>
+            <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/50 border-b">
                 <tr>
@@ -250,6 +277,7 @@ export function AdminReports() {
                 })}
               </tbody>
             </table>
+            </div>
           </div>
         </section>
       )}

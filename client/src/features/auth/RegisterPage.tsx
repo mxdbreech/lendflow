@@ -35,7 +35,7 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="min-h-dvh flex bg-background">
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col justify-between p-12">
         <div className="flex items-center gap-2">
@@ -63,8 +63,8 @@ export function RegisterPage() {
       </div>
 
       {/* Right panel */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-sm">
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-5 py-8 pt-[max(2rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]">
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-6 lg:hidden">
               <div className="h-7 w-7 rounded-lg bg-primary flex items-center justify-center">
@@ -75,7 +75,7 @@ export function RegisterPage() {
 
             {step === 1 ? (
               <>
-                <h1 className="text-2xl font-bold">Create your account</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold">Create your account</h1>
                 <p className="text-muted-foreground text-sm mt-1">Choose how you'll use LendFlow</p>
               </>
             ) : (
@@ -100,7 +100,7 @@ export function RegisterPage() {
                 <button
                   key={opt.role}
                   onClick={() => { setRole(opt.role); setStep(2) }}
-                  className="w-full flex items-start gap-4 rounded-xl border-2 border-border bg-white p-5 hover:border-primary hover:shadow-card-md transition-all text-left group"
+                  className="w-full flex items-start gap-4 rounded-xl border-2 border-border bg-card p-4 sm:p-5 min-h-11 hover:border-primary hover:shadow-card-md transition-all text-left group"
                 >
                   <span className="text-2xl">{opt.icon}</span>
                   <div>
@@ -133,7 +133,8 @@ export function RegisterPage() {
                     onChange={e => setName(e.target.value)}
                     required
                     autoFocus
-                    className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    autoComplete="name"
+                    className="w-full rounded-lg border bg-card px-3 py-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     placeholder="Jane Smith"
                   />
                 </div>
@@ -144,7 +145,9 @@ export function RegisterPage() {
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     required
-                    className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    autoComplete="email"
+                    inputMode="email"
+                    className="w-full rounded-lg border bg-card px-3 py-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -156,14 +159,15 @@ export function RegisterPage() {
                     onChange={e => setPassword(e.target.value)}
                     required
                     minLength={8}
-                    className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    autoComplete="new-password"
+                    className="w-full rounded-lg border bg-card px-3 py-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     placeholder="Min. 8 characters"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-white hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-sm"
+                  className="w-full min-h-11 rounded-lg bg-primary py-3 text-base font-semibold text-white hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-sm"
                 >
                   {loading ? 'Creating account…' : 'Create account'}
                 </button>

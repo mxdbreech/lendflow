@@ -86,7 +86,7 @@ export function LenderReports() {
   if (chartLoading) {
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-4 gap-4">{Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} />)}</div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">{Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} />)}</div>
         <CardSkeleton />
       </div>
     )
@@ -94,29 +94,29 @@ export function LenderReports() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-2xl font-bold">Reports & Statements</h1>
           <p className="text-muted-foreground mt-1">Yield history and annual income summaries</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
           <select
             value={selectedYear}
             onChange={e => setSelectedYear(e.target.value)}
-            className="rounded-md border px-3 py-2 text-sm bg-background"
+            className="min-h-11 rounded-md border px-3 text-sm bg-background"
           >
             {years.map(y => <option key={y} value={y}>{y}</option>)}
           </select>
           <button
             onClick={downloadIncomeReport}
-            className="flex items-center gap-2 rounded-md border px-4 py-2 text-sm hover:bg-muted transition-colors"
+            className="flex min-h-11 items-center justify-center gap-2 rounded-md border px-4 text-sm hover:bg-muted transition-colors"
           >
             <Download className="h-4 w-4" />
             Income Report
           </button>
           <button
             onClick={downloadTransactions}
-            className="flex items-center gap-2 rounded-md border px-4 py-2 text-sm hover:bg-muted transition-colors"
+            className="flex min-h-11 items-center justify-center gap-2 rounded-md border px-4 text-sm hover:bg-muted transition-colors"
           >
             <Download className="h-4 w-4" />
             Transactions
@@ -132,9 +132,9 @@ export function LenderReports() {
           { label: 'Total Yield Earned', value: formatCents(summary?.total_yield_earned ?? 0), sub: 'lifetime interest income', accent: true },
           { label: 'Projected Yield', value: formatCents(summary?.projected_future_yield ?? 0), sub: 'remaining if no defaults' },
         ].map(({ label, value, sub, accent }) => (
-          <div key={label} className="card-base p-5">
+          <div key={label} className="card-base p-4 sm:p-5 min-w-0">
             <p className="text-xs text-muted-foreground">{label}</p>
-            <p className={`text-2xl font-bold mt-1 ${accent ? 'text-emerald-700' : ''}`}>{value}</p>
+            <p className={`text-lg sm:text-2xl font-bold mt-1 break-words ${accent ? 'text-emerald-700' : ''}`}>{value}</p>
             <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>
           </div>
         ))}
@@ -143,18 +143,20 @@ export function LenderReports() {
       {/* Yield over time chart */}
       {yieldChart && yieldChart.length > 0 ? (
         <section>
-          <div className="card-base p-5">
+          <div className="card-base p-3 sm:p-5 min-w-0">
             <h2 className="font-semibold mb-4">Monthly Yield Income</h2>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={yieldChart}>
+            <div className="h-[240px] w-full min-w-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={yieldChart} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                <YAxis tickFormatter={v => `${symbol}${(v / 100).toFixed(0)}`} tick={{ fontSize: 11 }} />
+                <XAxis dataKey="month" tick={{ fontSize: 10 }} interval="preserveStartEnd" minTickGap={12} />
+                <YAxis width={40} tickFormatter={v => `${symbol}${(v / 100).toFixed(0)}`} tick={{ fontSize: 10 }} />
                 <Tooltip formatter={(v: unknown) => formatCents(v as number)} />
                 <Legend />
                 <Bar dataKey="amount" name="Monthly Yield" fill="#10b981" radius={[2, 2, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
+            </div>
           </div>
         </section>
       ) : (
@@ -168,17 +170,19 @@ export function LenderReports() {
       {/* Cumulative yield line chart */}
       {yieldChart && yieldChart.length > 1 && (
         <section>
-          <div className="card-base p-5">
+          <div className="card-base p-3 sm:p-5 min-w-0">
             <h2 className="font-semibold mb-4">Cumulative Interest Income</h2>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={yieldChart}>
+            <div className="h-[200px] w-full min-w-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={yieldChart} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                <YAxis tickFormatter={v => `${symbol}${(v / 100).toFixed(0)}`} tick={{ fontSize: 11 }} />
+                <XAxis dataKey="month" tick={{ fontSize: 10 }} interval="preserveStartEnd" minTickGap={12} />
+                <YAxis width={40} tickFormatter={v => `${symbol}${(v / 100).toFixed(0)}`} tick={{ fontSize: 10 }} />
                 <Tooltip formatter={(v: unknown) => formatCents(v as number)} />
                 <Line type="monotone" dataKey="cumulative" stroke="#3b82f6" strokeWidth={2} dot={false} name="Cumulative" />
               </LineChart>
             </ResponsiveContainer>
+            </div>
           </div>
         </section>
       )}
@@ -186,14 +190,14 @@ export function LenderReports() {
       {/* Annual income summary for tax purposes */}
       <section>
         <div className="card-base p-5">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
             <div>
               <h2 className="font-semibold">Annual Interest Income Summary</h2>
               <p className="text-sm text-muted-foreground">For tax reporting purposes — {selectedYear}</p>
             </div>
             <button
               onClick={downloadIncomeReport}
-              className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90"
+              className="flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm text-primary-foreground hover:bg-primary/90"
             >
               <Download className="h-4 w-4" />
               Download {selectedYear} Statement
@@ -203,7 +207,7 @@ export function LenderReports() {
             <p>This report includes all interest income received through LendFlow in {selectedYear}.</p>
             <p className="mt-1">Interest income from peer lending is generally reported as ordinary income. Please consult your tax advisor for guidance specific to your situation.</p>
           </div>
-          <div className="mt-4 grid grid-cols-3 gap-4 text-sm">
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
             <div className="rounded-lg border p-4">
               <p className="text-muted-foreground">Interest Income ({selectedYear})</p>
               <p className="text-xl font-bold mt-1 text-emerald-700">

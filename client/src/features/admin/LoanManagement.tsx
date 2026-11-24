@@ -49,7 +49,7 @@ export function LoanManagement() {
       <div className="flex gap-2 flex-wrap">
         <button
           onClick={() => setStatusFilter('')}
-          className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${!statusFilter ? 'bg-primary text-primary-foreground' : 'border hover:bg-accent'}`}
+          className={`rounded-full px-3 min-h-11 text-xs font-medium transition-colors ${!statusFilter ? 'bg-primary text-primary-foreground' : 'border hover:bg-accent'}`}
         >
           All
         </button>
@@ -57,7 +57,7 @@ export function LoanManagement() {
           <button
             key={s}
             onClick={() => setStatusFilter(statusFilter === s ? '' : s)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize ${statusFilter === s ? 'bg-primary text-primary-foreground' : 'border hover:bg-accent'}`}
+            className={`rounded-full px-3 min-h-11 text-xs font-medium transition-colors capitalize ${statusFilter === s ? 'bg-primary text-primary-foreground' : 'border hover:bg-accent'}`}
           >
             {s.replace('_', ' ')}
           </button>
@@ -66,6 +66,46 @@ export function LoanManagement() {
 
       {isLoading ? <TableSkeleton /> : (
         <div className="card-base overflow-hidden">
+          <div className="md:hidden divide-y divide-border">
+            {data?.loans.map(loan => (
+              <div key={loan.id} className="p-4 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium truncate">{loan.users?.name ?? '—'}</p>
+                    <p className="text-xs text-muted-foreground break-all">{loan.users?.email}</p>
+                  </div>
+                  <StatusBadge status={loan.status} />
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Purpose</p>
+                    <p>{LOAN_PURPOSE_LABELS[loan.purpose] ?? loan.purpose}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Amount</p>
+                    <p className="font-mono">{formatCents(loan.approved_amount ?? loan.amount_requested)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Grade</p>
+                    <CreditGradeBadge grade={loan.admin_override_grade ?? loan.ai_credit_grade} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Date</p>
+                    <p>{formatDate(loan.created_at)}</p>
+                  </div>
+                </div>
+                {loan.status === 'fully_funded' && (
+                  <button
+                    onClick={() => setDisburseId(loan.id)}
+                    className="w-full min-h-11 rounded-lg bg-emerald-600 text-sm font-semibold text-white hover:bg-emerald-700"
+                  >
+                    Disburse
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted/30 border-b border-border">
               <tr>
@@ -104,24 +144,25 @@ export function LoanManagement() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
       {disburseId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-card-lg space-y-4 m-4">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-4">
+          <div className="w-full max-w-sm rounded-t-2xl sm:rounded-xl bg-card p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-card-lg space-y-4 sm:m-4 max-h-[100dvh] overflow-y-auto">
             <h3 className="font-bold text-lg">Disburse Loan</h3>
             <p className="text-sm text-muted-foreground">This will release funds to the borrower and start the repayment schedule.</p>
-            <div className="flex gap-3">
+            <div className="flex flex-col-reverse sm:flex-row gap-3">
+              <button onClick={() => setDisburseId(null)} className="flex-1 min-h-11 rounded-lg border text-sm hover:bg-muted">
+                Cancel
+              </button>
               <button
                 onClick={() => disburse.mutate(disburseId)}
                 disabled={disburse.isPending}
-                className="flex-1 rounded-lg bg-emerald-600 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+                className="flex-1 min-h-11 rounded-lg bg-emerald-600 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
               >
                 {disburse.isPending ? 'Processing…' : 'Confirm Disbursement'}
-              </button>
-              <button onClick={() => setDisburseId(null)} className="flex-1 rounded-lg border py-2 text-sm hover:bg-muted">
-                Cancel
               </button>
             </div>
           </div>

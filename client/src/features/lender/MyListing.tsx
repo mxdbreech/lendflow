@@ -258,10 +258,10 @@ export function MyListing() {
             className="w-full rounded-xl border bg-background pl-3 pr-8 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" />
           <span className="absolute right-3 top-3 text-muted-foreground text-sm">%</span>
         </div>
-        <div className="grid grid-cols-6 gap-1.5">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
           {RATE_OPTIONS.map(opt => (
             <button key={opt.value} type="button" onClick={() => set('rate_period', opt.value)}
-              className={`rounded-xl border py-2 text-xs font-medium transition-all ${
+              className={`min-h-11 rounded-xl border py-2 text-xs font-medium transition-all ${
                 form.rate_period === opt.value ? 'bg-primary text-white border-primary' : 'border-border hover:bg-muted'
               }`}>{opt.label}</button>
           ))}
@@ -322,7 +322,7 @@ export function MyListing() {
           {(packages ?? []).length > 0 && !showPkgForm && (
             <div className="space-y-2">
               {packages!.map(pkg => (
-                <div key={pkg.id} className="flex items-center justify-between rounded-xl border bg-muted/30 px-4 py-3">
+                <div key={pkg.id} className="flex items-start justify-between gap-2 rounded-xl border bg-muted/30 px-4 py-3">
                   <div>
                     <p className="text-sm font-medium">{pkg.name}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">
@@ -332,11 +332,11 @@ export function MyListing() {
                       {pkg.max_term_days ? ` · up to ${pkg.max_term_days}d` : ''}
                     </p>
                   </div>
-                  <div className="flex gap-1.5">
-                    <button onClick={() => startEditPkg(pkg)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                  <div className="flex gap-1 shrink-0">
+                    <button onClick={() => startEditPkg(pkg)} aria-label="Edit package" className="flex h-11 w-11 items-center justify-center rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
-                    <button onClick={() => deletePkg.mutate(pkg.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
+                    <button onClick={() => deletePkg.mutate(pkg.id)} aria-label="Delete package" className="flex h-11 w-11 items-center justify-center rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>

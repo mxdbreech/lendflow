@@ -43,10 +43,10 @@ export function PlatformSettings() {
 
   return (
     <div className="max-w-2xl space-y-8">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <h1 className="text-2xl font-bold">Platform Settings</h1>
         {!editing && (
-          <button onClick={handleEdit} className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors">
+          <button onClick={handleEdit} className="min-h-11 shrink-0 rounded-md border px-4 text-sm font-medium hover:bg-accent transition-colors">
             Edit Settings
           </button>
         )}
@@ -145,7 +145,7 @@ export function PlatformSettings() {
 
           <section className="space-y-3">
             <h2 className="font-semibold">Interest Rates by Credit Grade</h2>
-            <div className="grid grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
               {['A', 'B', 'C', 'D', 'E'].map(grade => (
                 <div key={grade}>
                   <label className="block text-sm font-medium mb-1.5">Grade {grade} (%)</label>
@@ -165,11 +165,11 @@ export function PlatformSettings() {
 
           <div className="flex gap-3">
             <button type="submit" disabled={save.isPending}
-              className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
+              className="min-h-11 rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
               {save.isPending ? 'Saving…' : 'Save Settings'}
             </button>
             <button type="button" onClick={() => setEditing(false)}
-              className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">
+              className="min-h-11 rounded-md border px-4 text-sm font-medium hover:bg-accent">
               Cancel
             </button>
           </div>
@@ -178,8 +178,8 @@ export function PlatformSettings() {
         <div className="space-y-6 text-sm">
           <section className="space-y-3">
             <h2 className="font-semibold">Currency</h2>
-            <div className="flex gap-4 py-2">
-              <span className="w-48 text-muted-foreground">Platform Currency</span>
+            <div className="flex flex-col gap-0.5 sm:flex-row sm:gap-4 py-2">
+              <span className="sm:w-48 text-muted-foreground">Platform Currency</span>
               <span className="font-medium">{(settings as Record<string, unknown> | undefined)?.currency as string ?? 'USD'}</span>
             </div>
           </section>
@@ -191,8 +191,8 @@ export function PlatformSettings() {
               { label: 'Grace Period', value: `${settings?.grace_period_days} days` },
               { label: 'Default Threshold', value: `${settings?.default_threshold_missed} missed payments` },
             ].map(({ label, value }) => (
-              <div key={label} className="flex gap-4 py-2 border-b last:border-0">
-                <span className="w-48 text-muted-foreground">{label}</span>
+              <div key={label} className="flex flex-col gap-0.5 sm:flex-row sm:gap-4 py-2 border-b last:border-0">
+                <span className="sm:w-48 text-muted-foreground">{label}</span>
                 <span className="font-medium">{value}</span>
               </div>
             ))}
@@ -204,15 +204,15 @@ export function PlatformSettings() {
               { label: 'Max Loan', value: formatCents(settings?.max_loan_amount ?? 0) },
               { label: 'Min Commitment', value: formatCents(settings?.min_commitment_amount ?? 0) },
             ].map(({ label, value }) => (
-              <div key={label} className="flex gap-4 py-2 border-b last:border-0">
-                <span className="w-48 text-muted-foreground">{label}</span>
+              <div key={label} className="flex flex-col gap-0.5 sm:flex-row sm:gap-4 py-2 border-b last:border-0">
+                <span className="sm:w-48 text-muted-foreground">{label}</span>
                 <span className="font-medium">{value}</span>
               </div>
             ))}
           </section>
           <section>
             <h2 className="font-semibold mb-3">Interest Rates by Grade</h2>
-            <div className="grid grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
               {['A', 'B', 'C', 'D', 'E'].map(g => (
                 <div key={g} className="rounded-lg border p-3 text-center">
                   <p className="text-xs text-muted-foreground">Grade {g}</p>

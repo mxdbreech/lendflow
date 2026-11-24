@@ -16,7 +16,7 @@ export function NotificationBell() {
     <div className="relative">
       <button
         onClick={() => setOpen(o => !o)}
-        className="relative p-2 rounded-md hover:bg-accent transition-colors"
+        className="relative flex h-11 w-11 items-center justify-center rounded-md hover:bg-accent transition-colors"
         aria-label="Notifications"
       >
         <Bell className="h-5 w-5" />
@@ -30,13 +30,13 @@ export function NotificationBell() {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 z-50 mt-2 w-80 rounded-lg border bg-popover shadow-lg">
+          <div className="fixed inset-x-3 z-50 mt-2 max-h-[min(24rem,70dvh)] overflow-hidden rounded-xl border bg-popover shadow-lg top-[calc(env(safe-area-inset-top)+3.5rem)] sm:absolute sm:inset-x-auto sm:right-0 sm:top-auto sm:w-80">
             <div className="flex items-center justify-between border-b px-4 py-3">
               <span className="font-semibold text-sm">Notifications</span>
               {unread.length > 0 && (
                 <button
                   onClick={() => markAll.mutate()}
-                  className="text-xs text-muted-foreground hover:text-foreground"
+                  className="min-h-11 px-2 text-xs text-muted-foreground hover:text-foreground"
                 >
                   Mark all read
                 </button>

@@ -91,7 +91,7 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary placeholder:text-muted-foreground/60"
+      className={`w-full min-h-11 rounded-lg border bg-card px-3 py-2.5 text-base sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary placeholder:text-muted-foreground/60 ${props.className ?? ''}`}
     />
   )
 }
@@ -304,7 +304,7 @@ export function LoanOrigination() {
                 }`}>
                   {done ? <CheckCircle2 className="h-4 w-4" /> : n}
                 </div>
-                <span className={`text-[11px] font-medium ${active ? 'text-primary' : 'text-muted-foreground'}`}>{label}</span>
+                <span className={`text-[11px] font-medium text-center leading-tight ${active ? 'text-primary' : 'text-muted-foreground'}`}>{label}</span>
               </div>
               {i < STEPS.length - 1 && (
                 <div className={`flex-1 h-0.5 mb-4 mx-1 ${n < step ? 'bg-primary' : 'bg-muted'}`} />
@@ -316,7 +316,7 @@ export function LoanOrigination() {
 
       {/* ── Step 1: Borrower ─────────────────────────────────── */}
       {step === 1 && (
-        <div className="card-base p-6 space-y-4">
+        <div className="card-base p-4 sm:p-6 space-y-4">
           <div>
             <h2 className="font-semibold">Who's borrowing?</h2>
             <p className="text-xs text-muted-foreground mt-0.5">Contact info is optional — this is for your records only.</p>
@@ -353,7 +353,7 @@ export function LoanOrigination() {
 
       {/* ── Step 2: Terms ────────────────────────────────────── */}
       {step === 2 && (
-        <div className="card-base p-6 space-y-5">
+        <div className="card-base p-4 sm:p-6 space-y-5">
           <h2 className="font-semibold">Loan terms</h2>
 
           <div>
@@ -410,14 +410,14 @@ export function LoanOrigination() {
               />
               <span className="absolute right-3 top-2.5 text-muted-foreground text-sm">%</span>
             </div>
-            <div className="grid grid-cols-3 gap-1.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
               {RATE_OPTIONS.map(opt => (
                 <button
                   key={opt.value}
                   type="button"
                   onClick={() => set('rate_period', opt.value)}
                   title={opt.desc}
-                  className={`rounded-lg border py-2 text-xs font-medium transition-all ${
+                  className={`min-h-11 rounded-lg border py-2 text-xs font-medium transition-all ${
                     form.rate_period === opt.value
                       ? 'bg-primary text-white border-primary'
                       : 'border-border hover:border-primary/40 hover:bg-muted/50'
@@ -446,10 +446,10 @@ export function LoanOrigination() {
           {form.payment_type === 'custom_schedule' && (
             <div>
               <Label>Payment frequency <span className="text-destructive">*</span></Label>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {FREQUENCY_OPTIONS.map(f => (
                   <button key={f.v} type="button" onClick={() => set('payment_frequency', f.v)}
-                    className={`rounded-lg border py-2 text-xs font-medium transition-all ${
+                    className={`min-h-11 rounded-lg border py-2 text-xs font-medium transition-all ${
                       form.payment_frequency === f.v ? 'bg-primary text-white border-primary' : 'border-border hover:bg-muted'
                     }`}>{f.label}</button>
                 ))}
@@ -542,7 +542,7 @@ export function LoanOrigination() {
       {/* ── Step 3: Review ───────────────────────────────────── */}
       {step === 3 && (
         <div className="space-y-4">
-          <div className="card-base p-6 space-y-4">
+          <div className="card-base p-4 sm:p-6 space-y-4">
             <h2 className="font-semibold">Review</h2>
 
             <div className="space-y-2.5">
@@ -594,7 +594,7 @@ export function LoanOrigination() {
       {/* ── Step 4: Finalise ─────────────────────────────────── */}
       {step === 4 && (
         <div className="space-y-4">
-          <div className="card-base p-6 space-y-4">
+          <div className="card-base p-4 sm:p-6 space-y-4">
             <h2 className="font-semibold">Upload transfer receipt</h2>
             <p className="text-sm text-muted-foreground">
               Attach a screenshot or photo of the transfer confirmation.

@@ -65,13 +65,13 @@ export function BorrowerProfilePage() {
 
   return (
     <div className="max-w-2xl space-y-8">
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">Profile</h1>
           <p className="text-muted-foreground mt-1">{user?.email}</p>
         </div>
         {!editing && (
-          <button onClick={handleEdit} className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors">
+          <button onClick={handleEdit} className="min-h-11 shrink-0 rounded-md border px-4 text-sm font-medium hover:bg-accent transition-colors">
             Edit Profile
           </button>
         )}
@@ -97,7 +97,7 @@ export function BorrowerProfilePage() {
 
       {editing ? (
         <form onSubmit={e => { e.preventDefault(); save.mutate(form) }} className="space-y-5">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1.5">Date of Birth</label>
               <input type="date" value={form.date_of_birth ?? ''} onChange={e => setForm(f => ({ ...f, date_of_birth: e.target.value }))}
@@ -122,8 +122,8 @@ export function BorrowerProfilePage() {
               className="w-full rounded-md border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
-            <div className="col-span-1">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div className="col-span-2 sm:col-span-1">
               <label className="block text-sm font-medium mb-1.5">City</label>
               <input type="text" value={form.city ?? ''} onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
@@ -140,7 +140,7 @@ export function BorrowerProfilePage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1.5">Annual Income ($)</label>
               <input type="number" value={(form.annual_income ?? 0) / 100} onChange={e => setForm(f => ({ ...f, annual_income: Math.round(parseFloat(e.target.value || '0') * 100) }))}
@@ -189,9 +189,9 @@ export function BorrowerProfilePage() {
             { label: 'Credit Score', value: profile?.credit_score_range?.replace('_', ' ') },
           ].map(({ label, value }) => (
             value ? (
-              <div key={label} className="flex gap-4 py-2 border-b last:border-0">
-                <span className="w-40 text-muted-foreground shrink-0">{label}</span>
-                <span className="font-medium capitalize">{value}</span>
+              <div key={label} className="flex flex-col gap-0.5 sm:flex-row sm:gap-4 py-2 border-b last:border-0">
+                <span className="sm:w-40 text-muted-foreground shrink-0">{label}</span>
+                <span className="font-medium capitalize break-words">{value}</span>
               </div>
             ) : null
           ))}

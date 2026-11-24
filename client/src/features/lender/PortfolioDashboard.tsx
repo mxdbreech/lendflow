@@ -151,7 +151,7 @@ export function PortfolioDashboard() {
             ].map(({ label, value, sub, accent }) => (
               <div key={label} className="card-dark p-4">
                 <p className="text-xs text-white/50">{label}</p>
-                <p className={`text-lg font-bold mt-0.5 ${accent ? '' : 'text-white'}`}
+                <p className={`text-base sm:text-lg font-bold mt-0.5 break-words ${accent ? '' : 'text-white'}`}
                   style={accent ? { color: 'hsl(var(--lime))' } : {}}>
                   {value}
                 </p>

@@ -18,7 +18,7 @@ export function BorrowerShell() {
   const initial = user?.name?.[0]?.toUpperCase() ?? '?'
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-dvh bg-background">
       {/* Desktop sidebar — dark */}
       <aside className="hidden md:flex w-56 flex-shrink-0 flex-col bg-sidebar shadow-xl">
         <div className="px-5 py-5 border-b border-white/10">
@@ -63,16 +63,20 @@ export function BorrowerShell() {
 
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <header className="bg-background border-b border-border flex items-center justify-between px-4 py-3 md:px-6 md:h-14 shadow-sm sticky top-0 z-30">
-          <div className="flex items-center gap-2 md:hidden">
-            <div className="h-6 w-6 rounded-lg bg-primary flex items-center justify-center">
+        <header className="bg-background border-b border-border flex items-center justify-between gap-2 px-3 md:px-6 shadow-sm sticky top-0 z-30 pt-[env(safe-area-inset-top)] min-h-14">
+          <div className="flex items-center gap-2 md:hidden min-w-0">
+            <div className="h-6 w-6 rounded-lg bg-primary flex items-center justify-center shrink-0">
               <span className="text-[10px] font-bold text-white">L</span>
             </div>
-            <span className="font-bold text-sm">LendFlow</span>
+            <span className="font-bold text-sm truncate">LendFlow</span>
           </div>
           <div className="hidden md:block text-sm font-semibold">Borrower Portal</div>
-          <div className="flex items-center gap-2">
-            <button onClick={async () => { await signOut(); navigate('/login') }} className="md:hidden rounded-lg border border-border p-2 text-muted-foreground hover:bg-muted hover:text-destructive transition-colors">
+          <div className="flex items-center gap-1 shrink-0">
+            <button
+              onClick={async () => { await signOut(); navigate('/login') }}
+              aria-label="Sign out"
+              className="md:hidden flex h-11 w-11 items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-destructive transition-colors"
+            >
               <LogOut className="h-4 w-4" />
             </button>
             <ThemeToggle />
@@ -86,22 +90,22 @@ export function BorrowerShell() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 pb-24 md:p-6 md:pb-6">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 pb-24 md:p-6 md:pb-6">
           <Outlet />
         </main>
 
         {/* Mobile bottom nav */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border z-40">
+        <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-background/95 backdrop-blur pb-[env(safe-area-inset-bottom)]">
           <div className="flex">
             {navItems.map(({ to, label, icon: Icon, end }) => (
               <NavLink key={to} to={to} end={end}
                 className={({ isActive }) => cn(
-                  'flex-1 flex flex-col items-center gap-0.5 pt-2 pb-3 text-[10px] font-medium transition-colors',
+                  'flex-1 flex flex-col items-center justify-center gap-0.5 min-h-14 px-1 text-[11px] font-medium transition-colors',
                   isActive ? 'text-primary' : 'text-muted-foreground'
                 )}
               >
                 <Icon className="h-5 w-5" />
-                <span>{label}</span>
+                <span className="leading-none">{label}</span>
               </NavLink>
             ))}
           </div>

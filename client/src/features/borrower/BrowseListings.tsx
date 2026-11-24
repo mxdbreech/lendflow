@@ -74,7 +74,7 @@ export function BrowseListings() {
         </div>
         <button
           onClick={() => setShowFilters(f => !f)}
-          className={`rounded-xl border px-3 flex items-center gap-1.5 text-sm font-medium transition-colors ${showFilters ? 'bg-primary text-white border-primary' : 'bg-white hover:bg-muted'}`}
+          className={`min-h-11 min-w-11 rounded-xl border px-3 flex items-center justify-center gap-1.5 text-sm font-medium transition-colors ${showFilters ? 'bg-primary text-white border-primary' : 'bg-card hover:bg-muted'}`}
         >
           <SlidersHorizontal className="h-4 w-4" />
           <span className="hidden sm:inline">Filter</span>

@@ -85,9 +85,9 @@ export function BorrowerDashboard() {
           <div className="space-y-2">
             {pendingApps.map(loan => (
               <Link key={loan.id} to={`/borrower/loans/${loan.id}`}
-                className="flex items-center justify-between card-base p-4 active:scale-[0.99] transition-transform">
-                <div>
-                  <p className="font-medium text-sm">{LOAN_PURPOSE_LABELS[loan.purpose] ?? loan.purpose}</p>
+                className="flex items-center justify-between gap-3 card-base p-4 active:scale-[0.99] transition-transform">
+                <div className="min-w-0">
+                  <p className="font-medium text-sm truncate">{LOAN_PURPOSE_LABELS[loan.purpose] ?? loan.purpose}</p>
                   <p className="text-xs text-muted-foreground">{formatCents(loan.amount_requested)} · {loan.term_months}mo</p>
                   {/* Status bar */}
                   {['submitted', 'under_review'].includes(loan.status) && (
@@ -97,7 +97,7 @@ export function BorrowerDashboard() {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                   <StatusBadge status={loan.status} />
                   <ChevronRight className="h-4 w-4 text-muted-foreground" />
                 </div>
@@ -117,9 +117,9 @@ export function BorrowerDashboard() {
           <div className="space-y-2">
             {activeLoans.map(loan => (
               <Link key={loan.id} to={`/borrower/loans/${loan.id}`}
-                className="flex items-center justify-between card-base p-4 active:scale-[0.99] transition-transform">
-                <div>
-                  <p className="font-medium text-sm">{LOAN_PURPOSE_LABELS[loan.purpose] ?? loan.purpose}</p>
+                className="flex items-center justify-between gap-3 card-base p-4 active:scale-[0.99] transition-transform">
+                <div className="min-w-0">
+                  <p className="font-medium text-sm truncate">{LOAN_PURPOSE_LABELS[loan.purpose] ?? loan.purpose}</p>
                   <p className="text-xs text-muted-foreground">
                     {formatCents(loan.approved_amount ?? 0)} · {formatCents(loan.monthly_payment ?? 0)}/mo
                   </p>

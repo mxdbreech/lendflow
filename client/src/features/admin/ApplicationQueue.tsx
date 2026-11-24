@@ -84,6 +84,33 @@ export function ApplicationQueue() {
         <EmptyState icon={ClipboardList} title="Queue is clear" description="All applications have been reviewed." />
       ) : (
         <div className="rounded-lg border overflow-hidden">
+          <div className="md:hidden divide-y">
+            {data.map(item => (
+              <div key={item.id} className="p-4 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium">{LOAN_PURPOSE_LABELS[item.purpose] ?? item.purpose}</p>
+                    <p className="text-sm font-mono mt-0.5">{formatCents(item.amount_requested)}</p>
+                  </div>
+                  <CreditGradeBadge grade={item.ai_credit_grade} />
+                </div>
+                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  <span className={`rounded-full px-2 py-0.5 ${item.status === 'submitted' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                    {item.status.replace('_', ' ')}
+                  </span>
+                  <span>DTI {item.debt_to_income_ratio ? `${(item.debt_to_income_ratio * 100).toFixed(1)}%` : '—'}</span>
+                  <span>{formatDate(item.created_at)}</span>
+                </div>
+                <button
+                  onClick={() => { setSelected(item); setApprovedAmount(item.amount_requested); setAction(null) }}
+                  className="w-full min-h-11 rounded-lg border text-sm font-medium hover:bg-accent transition-colors"
+                >
+                  Review
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted/50 border-b">
               <tr>
@@ -121,24 +148,25 @@ export function ApplicationQueue() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
       {selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-2xl rounded-xl bg-background overflow-y-auto max-h-[90vh]">
-            <div className="p-6 border-b">
-              <div className="flex justify-between items-start">
-                <div>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 sm:p-4">
+          <div className="w-full max-w-2xl rounded-t-2xl sm:rounded-xl bg-background overflow-y-auto max-h-[100dvh] pb-[env(safe-area-inset-bottom)]">
+            <div className="sticky top-0 z-10 bg-background p-4 sm:p-6 border-b">
+              <div className="flex justify-between items-start gap-3">
+                <div className="min-w-0">
                   <h2 className="text-lg font-bold">{LOAN_PURPOSE_LABELS[selected.purpose] ?? selected.purpose}</h2>
                   <p className="text-sm text-muted-foreground">{formatCents(selected.amount_requested)} · {selected.term_months} months</p>
                 </div>
-                <button onClick={() => setSelected(null)} className="text-muted-foreground hover:text-foreground text-xl leading-none">×</button>
+                <button onClick={() => setSelected(null)} aria-label="Close" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground text-xl leading-none">×</button>
               </div>
             </div>
 
-            <div className="p-6 space-y-5">
-              <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="p-4 sm:p-6 space-y-5">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
                 {selected.borrower_profiles && (
                   <>
                     <div><p className="text-muted-foreground">Employment</p><p className="font-medium capitalize">{selected.borrower_profiles.employment_status?.replace('_', ' ')}</p></div>
@@ -168,11 +196,11 @@ export function ApplicationQueue() {
               )}
 
               {!action && (
-                <div className="flex gap-3">
-                  <button onClick={() => setAction('approve')} className="flex-1 rounded-md bg-emerald-600 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button onClick={() => setAction('approve')} className="flex-1 min-h-11 rounded-md bg-emerald-600 text-sm font-medium text-white hover:bg-emerald-700">
                     Approve
                   </button>
-                  <button onClick={() => setAction('reject')} className="flex-1 rounded-md bg-red-600 py-2 text-sm font-medium text-white hover:bg-red-700">
+                  <button onClick={() => setAction('reject')} className="flex-1 min-h-11 rounded-md bg-red-600 text-sm font-medium text-white hover:bg-red-700">
                     Reject
                   </button>
                 </div>
@@ -186,14 +214,14 @@ export function ApplicationQueue() {
                       <span className="absolute left-3 top-2.5 text-muted-foreground text-sm">{symbol}</span>
                       <input type="number" value={approvedAmount / 100}
                         onChange={e => setApprovedAmount(Math.round(parseFloat(e.target.value) * 100))}
-                        className="w-full rounded-md border bg-background pl-7 pr-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+                        className="w-full rounded-md border bg-background pl-7 pr-3 py-2 text-base sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
                     </div>
                   </div>
-                  <div className="flex gap-3">
-                    <button onClick={handleReview} disabled={review.isPending} className="flex-1 rounded-md bg-emerald-600 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50">
+                  <div className="flex flex-col-reverse sm:flex-row gap-3">
+                    <button onClick={() => setAction(null)} className="flex-1 min-h-11 rounded-md border text-sm hover:bg-accent">Cancel</button>
+                    <button onClick={handleReview} disabled={review.isPending} className="flex-1 min-h-11 rounded-md bg-emerald-600 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50">
                       {review.isPending ? 'Processing…' : 'Confirm Approval'}
                     </button>
-                    <button onClick={() => setAction(null)} className="flex-1 rounded-md border py-2 text-sm hover:bg-accent">Cancel</button>
                   </div>
                 </div>
               )}
@@ -204,13 +232,13 @@ export function ApplicationQueue() {
                     <label className="block text-sm font-medium mb-1.5">Rejection Reason</label>
                     <textarea value={rejectionReason} onChange={e => setRejectionReason(e.target.value)} rows={3}
                       placeholder="This will be shown to the borrower..."
-                      className="w-full rounded-md border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none" />
+                      className="w-full rounded-md border bg-background px-3 py-2 text-base sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none" />
                   </div>
-                  <div className="flex gap-3">
-                    <button onClick={handleReview} disabled={review.isPending} className="flex-1 rounded-md bg-red-600 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50">
+                  <div className="flex flex-col-reverse sm:flex-row gap-3">
+                    <button onClick={() => setAction(null)} className="flex-1 min-h-11 rounded-md border text-sm hover:bg-accent">Cancel</button>
+                    <button onClick={handleReview} disabled={review.isPending} className="flex-1 min-h-11 rounded-md bg-red-600 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50">
                       {review.isPending ? 'Processing…' : 'Confirm Rejection'}
                     </button>
-                    <button onClick={() => setAction(null)} className="flex-1 rounded-md border py-2 text-sm hover:bg-accent">Cancel</button>
                   </div>
                 </div>
               )}
